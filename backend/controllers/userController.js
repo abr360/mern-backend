@@ -18,10 +18,10 @@ const registerUser = asyncHandler(async (req, res) => {
     const user=await User.create({name,email,password:hashedPassword});
     if(user){
         res.status(201).json({
-            _id:user._id,
+            _id:user.id,
             name:user.name,
             email:user.email,
-            token:generateToken(user._id)
+            token:generateToken(user.id)
         })
     }else{
             res.status(400);
@@ -38,7 +38,7 @@ const loginUser = asyncHandler(async (req, res) => {
               _id:user._id,
               name:user.name,
               email:user.email,
-              token:generateToken(user._id)
+              token:generateToken(user.id)
             
          })
     }
@@ -50,7 +50,17 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const getMe = asyncHandler(async (req, res) => {
-    res.status(200).json({message: 'Get me'});
+    const user=await User.findById(req.user._id);
+    if(user){
+        res.status(200).json({
+            _id:user._id,
+            name:user.name,
+            email:user.email
+        });
+    }else{
+        res.status(404);
+        throw new Error('User not found');
+    }
 });
 
 const generateToken=(id)=>{
