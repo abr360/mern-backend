@@ -7,7 +7,8 @@ connectDB();
 const app=express();
 app.use(express.json());
 const { errorHandler } = require('./middleware/errorMiddleWare');
-app.use('/api/goals', require('./routes/goalRoutes'))    ;
+app.use('/api/goals', require('./routes/goalRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 app.use(express.urlencoded({extended:false}));
 app.use(errorHandler);
 
