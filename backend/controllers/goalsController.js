@@ -5,16 +5,39 @@ const getGoals = asyncHandler(async (req, res) => {
     res.status(200).json(goals);
 });
 
-const postGoals = asyncHandler((req, res) => {
-    res.status(200).json({ message: 'post from controller' });
+const postGoals = asyncHandler(async(req, res) => {
+    if (!req.body || !req.body.text) {
+        res.status(400);
+        throw new Error('Request body or text property is missing');
+      }
+        const createdGoal = await Goal.create({
+            text: req.body.text
+        });
+        res.status(201).json(createdGoal);
+ 
 });
 
-const putGoals = asyncHandler((req, res) => {
-    res.status(200).json({ message: `put from controller and id is ${req.params.id}` });
+const putGoals = asyncHandler(async(req, res) => {
+   const goal = Goal.findById(req.params.id);
+    if(!goal){
+        res.status(404);
+        throw new Error('Goal not found');
+    }
+    const updatedGoal = await Goal.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+       
+    });
+    res.status(200).json(updatedGoal);
 });
 
-const deleteGoals = asyncHandler((req, res) => {
-    res.status(200).json({ message: `delete from controller and id is ${req.params.id}` });
+const deleteGoals = asyncHandler(async(req, res) => {
+    const goal = Goal.findById(req.params.id);
+    if(!goal){
+        res.status(404);
+        throw new Error('Goal not found');
+    }
+   await Goal.findByIdAndDelete(req.params.id);
+    res.status(200).json(`Goal with id ${req.params.id} deleted`);
 });
 
 module.exports = { getGoals, postGoals, putGoals, deleteGoals };
