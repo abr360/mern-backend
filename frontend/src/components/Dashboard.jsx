@@ -24,7 +24,9 @@ function Dashboard() {
 
   return (
     <>
-      <section className="content max-w-4xl mx-auto p-4">
+    <div className=' bg-cyan-100 h-screen'>
+ 
+      <section className="max-w-4xl mx-auto p-4">
         <h2 className="text-2xl font-bold text-center">Welcome, {user?.name}</h2>
         <h3 className="text-lg text-center text-gray-600">Here are your goals</h3>
         <GoalForm />
@@ -39,6 +41,7 @@ function Dashboard() {
           <h3 className="text-lg text-center text-gray-600">You have not set any goals</h3>
         )}
       </section>
+      </div>
     </>
   );
 }

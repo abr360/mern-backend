@@ -18,7 +18,7 @@ const Header = () => {
   return (
     <div className='flex justify-between border-b-2 bg-cyan-700 text-white'>
       <div className='py-5 px-3'>
-        <Link className='text-2xl' to='/'>Todo</Link>
+        <Link className='text-2xl' to='/'>Goals Setter</Link>
       </div>
       <div className='flex py-5 px-3 items-center'>
         {isAuthenticated ? (
