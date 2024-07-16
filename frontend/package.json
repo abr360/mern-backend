@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "proxy":"https://appsail-50021396988.development.catalystappsail.in",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",

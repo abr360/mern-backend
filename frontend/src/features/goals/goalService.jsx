@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8000/api/goals';
+const API_URL = 'https://appsail-50021396988.development.catalystappsail.in/api/goals';
 
 export const createGoal = async (goalData, token) => {
   const config = {

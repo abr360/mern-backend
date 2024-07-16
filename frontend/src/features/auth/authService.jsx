@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { setLoading, setUser, setError } from '../auth/authSlice';
 
-const API_URL = 'http://localhost:8000/api/users';
+const API_URL = 'https://appsail-50021396988.development.catalystappsail.in/api/users';
 
 export const useRegisterMutation = () => {
   const dispatch = useDispatch();
