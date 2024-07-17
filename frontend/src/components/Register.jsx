@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../features/auth/authSlice';
 import { FaUser } from 'react-icons/fa';
 import { useRegisterMutation } from '../features/auth/authService';
-import {useNavigate} from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { useGetGoals } from '../features/goals/goalSlice';
-import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 const schema = yup.object().shape({
   name: yup.string().required('Name is required'),
   email: yup.string().email('Invalid email').required('Email is required'),
@@ -21,6 +19,7 @@ const schema = yup.object().shape({
 const Register = () => {
   const dispatch = useDispatch();
   const [showAlert, setShowAlert] = useState(false);
+  const [isError, setIsError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const registerMutation = useRegisterMutation();
@@ -30,15 +29,11 @@ const Register = () => {
   });
   const user = useSelector((state) => state.auth.user);
 
-  const { data: goals, isLoading, isError, error } = useGetGoals();
   useEffect(() => {
     if (user) {
       navigate('/');
     }
   }, [user, navigate]);
-
-
-
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -48,26 +43,24 @@ const Register = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-
-
   const onSubmit = async (data) => {
     try {
-      // Use the mutateAsync method directly in the component
       const result = await registerMutation.mutateAsync(data);
-     console.log('Result:', result); // Check the result for debugging
       dispatch(setUser(result));
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 1500);
       reset();
       navigate('/');
-
     } catch (error) {
-      // Handle any errors
       console.error(error);
-
+      setIsError(error.message);
     }
   };
-  
+
+  const handleEmailChange = () => {
+    setIsError('');
+  };
+
   return (
     <>
       {showAlert && (
@@ -77,21 +70,23 @@ const Register = () => {
           </div>
         </div>
       )}
-      <form onSubmit={handleSubmit(onSubmit)} className='w-full lg:px-32 px-7 py-5'>
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-          <div className="flex items-center justify-center">
+ 
+      <div className='flex lg:items-center items-start pt-28 justify-center min-h-screen bg-cyan-100'>
+        <form onSubmit={handleSubmit(onSubmit)} className='bg-white px-8 py-4 rounded-lg shadow-md w-full max-w-md mx-6'>
+          <div className="flex items-center justify-center mb-5">
             <FaUser className='text-6xl text-cyan-700' />
           </div>
-          <h1 className="text-3xl font-semibold text-center">Register</h1>
-          <div>
+          <h1 className="text-3xl font-semibold text-center mb-5">Register</h1>
+          <div className="mb-4">
             <input {...register('name')} type="text" placeholder="Your Name" className="w-full p-3 bg-cyan-50 rounded-lg border-2 border-cyan-500" />
-            {errors.name && <p className='from-gray-950 mb-2'>{errors.name.message}</p>}
+            {errors.name && <p className='text-red-500 mb-2'>{errors.name.message}</p>}
           </div>
-          <div>
-            <input {...register('email')} type="email" placeholder="Your Email" className="w-full p-3 bg-cyan-50 rounded-lg border-2 border-cyan-500" />
-            {errors.email && <p className='from-gray-950 mb-2'>{errors.email.message}</p>}
+          <div className="mb-4">
+            <input {...register('email')} type="email" placeholder="Your Email" className="w-full p-3 bg-cyan-50 rounded-lg border-2 border-cyan-500" onChange={handleEmailChange} />
+            {errors.email && <p className='text-red-500 mb-2'>{errors.email.message}</p>}
+            {isError && <p className='text-red-500 mb-2'>{isError}</p>}
           </div>
-          <div className="relative">
+          <div className="relative mb-4">
             <input
               {...register('password')}
               type={showPassword ? 'text' : 'password'}
@@ -103,15 +98,15 @@ const Register = () => {
               onClick={togglePasswordVisibility}
               className="absolute right-3 top-3.5 text-xl"
             >
-              {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
+              {showPassword ? <AiFillEyeInvisible className='text-cyan-700' /> : <AiFillEye className='text-cyan-700' />}
             </button>
             {errors.password && <p className='text-red-500 mb-2'>{errors.password.message}</p>}
           </div>
-          <div className="relative">
+          <div className="relative mb-4">
             <input
               {...register('confirmPassword')}
               type={showConfirmPassword ? 'text' : 'password'}
-              placeholder="Your Confirm Password"
+              placeholder="Confirm Password"
               className="w-full p-3 bg-cyan-50 rounded-lg border-2 border-cyan-500"
             />
             <button
@@ -119,13 +114,13 @@ const Register = () => {
               onClick={toggleConfirmPasswordVisibility}
               className="absolute right-3 top-3.5 text-xl"
             >
-              {showConfirmPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
+              {showConfirmPassword ? <AiFillEyeInvisible className='text-cyan-700' /> : <AiFillEye className='text-cyan-700' />}
             </button>
             {errors.confirmPassword && <p className='text-red-500 mb-2'>{errors.confirmPassword.message}</p>}
           </div>
-        </div>
-        <input type="submit" className={`mb-3 mt-4 py-3 px-3 rounded-lg xl:mx-auto font-semibold border-2 text-black bg-cyan-100 border-gray-500 ${isValid && isDirty ? 'bg-cyan-700 hover:bg-cyan-600 text-white' : 'bg-cyan-300 cursor-not-allowed'}`} value="Register" disabled={!isValid && !isDirty} />
-      </form>
+          <input type="submit" className={`w-full py-3 px-3 rounded-lg font-semibold border-2 text-black ${isValid && isDirty ? 'bg-cyan-700 hover:bg-cyan-600 text-white' : 'bg-cyan-300 cursor-not-allowed'}`} value="Register" disabled={!isValid && !isDirty} />
+        </form>
+      </div>
     </>
   );
 }
