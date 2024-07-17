@@ -8,12 +8,16 @@ import { FaUser } from 'react-icons/fa';
 import { useLoginMutation } from '../features/auth/authService';
 import { setLoading, setUser, setError } from '../features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useGetGoals } from '../features/goals/goalSlice';
+import { useEffect } from 'react';
 const schema = yup.object().shape({
   email: yup.string().email('Invalid email').required('Email is required'),
   password: yup.string().required('Password is required'),
 });
 
 const Login = () => {
+
   const dispatch = useDispatch();
   const [showAlert, setShowAlert] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -23,6 +27,16 @@ const Login = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+
+  const user = useSelector((state) => state.auth.user);
+
+  const { data: goals, isLoading, isError, error } = useGetGoals();
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   const { register, handleSubmit, formState: { errors, isValid, isDirty }, reset } = useForm({
     resolver: yupResolver(schema)
@@ -64,7 +78,7 @@ const Login = () => {
             <p className='text-center text-white'>{loginError}</p>
           </div>
         </div>)}
-      <form onSubmit={handleSubmit(onSubmit)} name="form-content" className='w-full px-32 py-5'>
+      <form onSubmit={handleSubmit(onSubmit)} className='w-full lg:px-32 px-7 py-5'>
      
         <div className="grid grid-cols-1 gap-5">
           <div className="flex items-center justify-center">
@@ -94,7 +108,7 @@ const Login = () => {
             {errors.password && <p className='text-red-500 mb-2'>{errors.password.message}</p>}
           </div>
         </div>
-        <input type="submit" className={`mb-3 mt-4 py-3 px-3 rounded-lg xl:mx-auto font-semibold border-2 text-black bg-cyan-100 border-gray-500 ${isValid && isDirty ? 'bg-cyan-700 hover:bg-cyan-600 text-white' : 'bg-cyan-300 cursor-not-allowed'}`} value="Login" disabled={!isValid || !isDirty} />
+        <input type="submit" className={`mb-3 mt-4 py-3 px-3 rounded-lg xl:mx-auto font-semibold border-2 text-black bg-cyan-100 border-gray-500 ${isValid && isDirty ? 'bg-cyan-700 hover:bg-cyan-600 text-white' : 'bg-cyan-300 cursor-not-allowed'}`} value="Login" disabled={!isValid && !isDirty} />
       </form>
     </>
   );

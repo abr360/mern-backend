@@ -3,17 +3,20 @@ import { createGoal, getGoals, deleteGoal } from './goalService';
 import { useSelector } from 'react-redux';
 
 export const useCreateGoal = () => {
-    const user = useSelector((state) => state.auth.user);
-    const token = user ? user.token : null;
-    const queryClient = useQueryClient();
-  
-    return useMutation({
-      mutationFn: (goalData) => createGoal(goalData, token),
-      onSuccess: () => {
-        queryClient.invalidateQueries(['goals']);
-      },
-    });
+  const user = useSelector((state) => state.auth.user);
+  const token = user ? user.token : null;
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (goalData) => createGoal(goalData, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['goals']);
+    },
+  });
+
+  return mutation;
 };
+
 
   export const useGetGoals = () => {
     const user = useSelector((state) => state.auth.user);

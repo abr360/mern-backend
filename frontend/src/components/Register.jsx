@@ -8,6 +8,9 @@ import { setUser } from '../features/auth/authSlice';
 import { FaUser } from 'react-icons/fa';
 import { useRegisterMutation } from '../features/auth/authService';
 import {useNavigate} from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useGetGoals } from '../features/goals/goalSlice';
+import { useEffect } from 'react';
 const schema = yup.object().shape({
   name: yup.string().required('Name is required'),
   email: yup.string().email('Invalid email').required('Email is required'),
@@ -22,6 +25,21 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const registerMutation = useRegisterMutation();
   const navigate = useNavigate();
+  const { register, handleSubmit, formState: { errors, isValid, isDirty }, reset } = useForm({
+    resolver: yupResolver(schema)
+  });
+  const user = useSelector((state) => state.auth.user);
+
+  const { data: goals, isLoading, isError, error } = useGetGoals();
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
+
+
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -30,9 +48,7 @@ const Register = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  const { register, handleSubmit, formState: { errors, isValid, isDirty }, reset } = useForm({
-    resolver: yupResolver(schema)
-  });
+
 
   const onSubmit = async (data) => {
     try {
@@ -61,7 +77,7 @@ const Register = () => {
           </div>
         </div>
       )}
-      <form onSubmit={handleSubmit(onSubmit)} name="form-content" className='w-full px-32 py-5'>
+      <form onSubmit={handleSubmit(onSubmit)} className='w-full lg:px-32 px-7 py-5'>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
           <div className="flex items-center justify-center">
             <FaUser className='text-6xl text-cyan-700' />
@@ -108,7 +124,7 @@ const Register = () => {
             {errors.confirmPassword && <p className='text-red-500 mb-2'>{errors.confirmPassword.message}</p>}
           </div>
         </div>
-        <input type="submit" className={`mb-3 mt-4 py-3 px-3 rounded-lg xl:mx-auto font-semibold border-2 text-black bg-cyan-100 border-gray-500 ${isValid && isDirty ? 'bg-cyan-700 hover:bg-cyan-600 text-white' : 'bg-cyan-300 cursor-not-allowed'}`} value="Register" disabled={!isValid || !isDirty} />
+        <input type="submit" className={`mb-3 mt-4 py-3 px-3 rounded-lg xl:mx-auto font-semibold border-2 text-black bg-cyan-100 border-gray-500 ${isValid && isDirty ? 'bg-cyan-700 hover:bg-cyan-600 text-white' : 'bg-cyan-300 cursor-not-allowed'}`} value="Register" disabled={!isValid && !isDirty} />
       </form>
     </>
   );
