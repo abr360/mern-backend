@@ -48,15 +48,15 @@ function Dashboard() {
 
   return (
     <>
-    <div className=' bg-cyan-100 h-screen'>
+    <div className=' bg-cyan-100 h-full'>
  
-      <section className="max-w-4xl mx-auto p-4">
+      <section className=" p-4">
         <h2 className="text-2xl font-bold text-center">Welcome, {user?.name}</h2>
         <h3 className="text-lg text-center text-gray-600">Here are your goals</h3>
-        <GoalForm />
+        <GoalForm/>
   
         {goals && goals.length > 0 ? (
-          <div className="goals grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+          <div className=" grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 *:mx-10 gap-4 p-4">
             {goals.map((goal) => (
               <GoalItem key={goal._id} goal={goal} />
             ))}
