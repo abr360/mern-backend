@@ -7,6 +7,3 @@ router.route('/:id').put(protect, putGoals).delete(protect, deleteGoals);
 
 module.exports = router;
 
-
-
-module.exports = router;

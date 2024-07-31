@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useCreateGoal } from '../features/goals/goalSlice';
 import RichTextEditor from "rich-text-editor-for-react";
@@ -8,10 +8,12 @@ function GoalForm() {
   const { register, handleSubmit, formState: { errors }, reset } = useForm();
   const { output, fetchOutput } = useRichTextEditor();
   const { mutate: createGoal, isLoading } = useCreateGoal();
+  const [editorKey, setEditorKey] = useState(0);
 
   const onSubmit = (data) => {
-    createGoal(output); // Save the rich text editor output
+    createGoal(output);
     reset();
+    setEditorKey(prevKey => prevKey + 1); // Force re-mount RichTextEditor
   };
 
   return (
@@ -20,18 +22,19 @@ function GoalForm() {
         <div className="flex flex-col">
           <label htmlFor="richText" className="mb-2 font-semibold">Goal</label>
           <RichTextEditor
+            
+            key={editorKey}
             id="richText"
             toolbarOptions={[
               "word_count",
               "code_block",
               "link",
-
               "undo",
               "redo",
               "font",
               "header",
               "bold",
-
+              
               "text_color",
               "highlight_color",
               "numbered_list",
@@ -41,7 +44,6 @@ function GoalForm() {
               "increase_indent",
               "direction",
               "blockquote",
-
               "embed_video",
               "format_media",
               "sub_script",
@@ -52,6 +54,7 @@ function GoalForm() {
               primaryColor: "#20464b",
               stickyToolbarOnScroll: true,
             }}
+            
             fetchOutput={fetchOutput}
           />
         </div>
